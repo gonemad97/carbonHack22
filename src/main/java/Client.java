@@ -25,7 +25,7 @@ public class Client {
     public List<ServerClientProtocol> taskCreation(){
         List<ServerClientProtocol> taskList = new ArrayList<>();
         int noOfTask = 0;
-        while(noOfTask < 50){
+        while(noOfTask < 5){
             ServerClientProtocol scp1 = new ServerClientProtocol();
             int priority = randomPriorityGenerator();
             scp1.setPriority(priority);
@@ -53,15 +53,18 @@ public class Client {
         OutputStream outputStream = echoSocket.getOutputStream();
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
         // create an object output stream from the output stream so we can send an object through it
-        List<ServerClientProtocol> tasksList = new Client().taskCreation();
+
         int i = 0;
-        while(i < tasksList.size()){
-            System.out.println("sending task " + i);
-            System.out.println("priority: " + tasksList.get(i).getPriority());
-            objectOutputStream.writeObject(tasksList.get(i));
-            Thread.sleep(3000);
-            i++;
+        while(i < 3){
+            List<ServerClientProtocol> tasksList = new Client().taskCreation();
+            objectOutputStream.writeObject(tasksList);
+//            System.out.println("sending task " + i);
+//            System.out.println("priority: " + tasksList.get(i).getPriority());
+//            objectOutputStream.writeObject(tasksList.get(i));
+//            Thread.sleep(3000);
+//            i++;
         }
+        Thread.sleep(300000000);
         echoSocket.close();
     }
 
