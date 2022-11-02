@@ -1,53 +1,48 @@
+//import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.sql.Time;
-import java.util.Date;
+import java.io.Serializable;
 
-import com.fasterxml.jackson.core.*;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import java.sql.Time;
-import java.util.Date;
-
-public class APIResponseClass {
+public class APIResponseClass implements Serializable{
     @JsonProperty("location")
-    private String location;
+    private Object location;
 
-    @JsonProperty("time")
-    private Date date;
+    @JsonProperty("timeStamp")
+    private Object date;
 
-    @JsonProperty("rating")
+    @JsonProperty("value")
     private double rating;
 
     @JsonProperty("duration")
-    private Time duration;
+    private Object duration;
 
     public APIResponseClass(){
 
     }
 
-    public void setLocation(String loc){
+    public void setLocation(Object loc){
         this.location = loc;
     }
-    public String getLocation(){
+    public Object getLocation(){
         return this.location;
     }
-    public void setTime(Date time){
+    public void setTime(Object time){
         this.date = time;
     }
-    public Date getTime(){
+    public Object getTime(){
         return this.date;
     }
     public void setRating(double rating){
         this.rating = rating;
     }
-    public double getRating(){
+    public double getValue(){
         return this.rating;
     }
-    public void setDuration(Time duration){
+    public void setDuration(Object duration){
         this.duration = duration;
     }
-    public Time getDuration(){
+    public Object getDuration(){
         return this.duration;
     }
 

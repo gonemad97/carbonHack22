@@ -5,58 +5,52 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
 
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.ObjectUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 
 public class TestAPIData {
-//    public HashMap<String, Double> averageEmissionsTest(URL APIUrl, HttpURLConnection conn, List<String> locations, boolean flag) throws IOException, ParseException {
-//        //set the location, time parameters in the url
-////        if(flag){
-//        HashMap<String, Double> locationBasedAvg = new HashMap<>();
-//        int i = 0;
-//        double avgSum =0;
-//        while(i < locations.size()){
-//            InputStream responseStream = conn.getInputStream();
-//            System.out.println(responseStream);
-//            JSONParser jsonParser = new JSONParser();
-//            JSONArray jsonArray = (JSONArray)jsonParser.parse(
-//                    new InputStreamReader(responseStream, "UTF-8"));
-//            ArrayList<HashMap<String, Object>> jsonList = new ArrayList<>();
-//            System.out.println(jsonArray.get(0));
-//            ObjectMapper mapper = new ObjectMapper();
-//            HashMap<String,Object> result =
-//                    new ObjectMapper().readValue(jsonArray.get(0).toString(), HashMap.class);
-//            List<APIResponseClass> responseObjectList= new ArrayList<>();
-//            List<Object> jsonResponse = (List<Object>) result.get("forecastData");
-//            System.out.println("json Response to string " + jsonResponse.get(0).toString());
-//            int object = 0;
-//            int emissionsSum = 0;
-//            while(object < jsonResponse.size()){
-//                APIResponseClass apiResponseClass = mapper.readValue(jsonResponse.get(object), APIResponseClass.class);
-    //We're checking api response class
-//                responseObjectList.add(apiResponseClass);
-//                emissionsSum += apiResponseClass.getRating();
-//                object++;
-//            }
-//            double emissionsAvg = emissionsSum/ jsonArray.size();
-//            if(flag){
-//                locationBasedAvg.put(locations.get(i), emissionsAvg);
-//            }
-//            else{
-//                avgSum += emissionsAvg;
-//            }
-//
-//            double dailyAvg = avgSum/3;
-//            locationBasedAvg.put("dailyAvg", dailyAvg);
-//
-//            i++;
-//        }
-//        return locationBasedAvg;
-//    }
+    public Double averageEmissionsTest(URL APIUrl, HttpURLConnection conn, List<String> locations, boolean flag) throws IOException, ParseException {
+        //set the location, time parameters in the url
+//        if(flag){
+        HashMap<String, Double> locationBasedAvg = new HashMap<>();
+        Double median = 0.0;
+        int i = 0;
+        double avgSum =0;
+        while(i < locations.size()){
+            InputStream responseStream = conn.getInputStream();
+            System.out.println(responseStream);
+            JSONParser jsonParser = new JSONParser();
+            JSONArray jsonArray = (JSONArray)jsonParser.parse(
+                    new InputStreamReader(responseStream, "UTF-8"));
+            System.out.println(jsonArray.get(0));
+            HashMap<String,Object> result =
+                    new ObjectMapper().readValue(jsonArray.get(0).toString(), HashMap.class);
+            List<APIResponseClass> responseObjectList= new ArrayList<>();
+            List<LinkedHashMap> jsonResponse = (List<LinkedHashMap>) result.get("forecastData");
+            System.out.println("json Response to string " + jsonResponse.get(0).toString());
+            List<Double> medianList = new ArrayList<>();
+            for(int object = 0; object < jsonResponse.size(); object++){
+                APIResponseClass apiResponseClass = new APIResponseClass();
+                apiResponseClass.setRating((Double) jsonResponse.get(object).get("value"));
+                responseObjectList.add(apiResponseClass);
+                medianList.add(apiResponseClass.getValue());
+            }
+            Collections.sort(medianList);
+            if(medianList.size() %2 == 0){
+                median = (medianList.get(medianList.size()/2) + medianList.get((medianList.size()/2)+1))/2;
+            }
+            else{
+                median = medianList.get(medianList.size()/2);
+            }
+            i++;
+        }
+        System.out.println(median);
+        return median;
+    }
 
     public TestAPIData(){
 
@@ -97,21 +91,21 @@ public class TestAPIData {
 //        locations.add(loc3);
         boolean flag = true;
 
-        URL thirtyUrl = new URL("https://carbon-aware-api.azurewebsites.net/emissions/forecasts/current?location=eastus&dataStartAt=11%2F2%2F2022%2003%3A00%3A00%20AM%20%2B00%3A00&dataEndAt=11%2F2%2F2022%2003%3A30%20AM%20%2B00%3A00");
-        String dayWiseAPIUrl = "https://carbon-aware-api.azurewebsites.net/emissions/forecasts/current?location=eastus&location=westus&location=uksouth";
-        URL dayWiseUrl = new URL(dayWiseAPIUrl);
+        URL thirtyUrl = new URL("https://carbon-aware-api.azurewebsites.net/emissions/forecasts/current?location=westus&dataStartAt=11%2F3%2F2022%205%3A05%3A00%20AM%20%2B00%3A00&dataEndAt=11%2F3%2F2022%205%3A35%3A00%20AM%20%2B00%3A00");
+        URL dayWiseUrl = new URL("https://carbon-aware-api.azurewebsites.net/emissions/forecasts/current?location=eastus&location=westus&location=uksouth");
         // Open a connection(?) on the URL(??) and cast the response(???)
         HttpURLConnection connectionThirty = (HttpURLConnection) thirtyUrl.openConnection();
         connectionThirty.setRequestProperty("accept", "application/json");
         connectionThirty.setRequestMethod("GET");
-//        HashMap<String, Double> thirtyAvg = new TestAPIData().averageEmissionsTest(thirtyUrl, connectionThirty,locations, true);
-//
-//        HttpURLConnection dayWiseConnection = (HttpURLConnection) thirtyUrl.openConnection();
-//        dayWiseConnection.setRequestProperty("accept", "application/json");
-//        dayWiseConnection.setRequestMethod("GET");
-//        HashMap<String, Double> dayWiseAvg = new TestAPIData().averageEmissionsTest(dayWiseUrl, dayWiseConnection, locations, false);
+        double thirtyMedian = new TestAPIData().averageEmissionsTest(thirtyUrl, connectionThirty,locations, true);
 
-//        System.out.println(dayWiseAvg + " " + thirtyAvg);
+        HttpURLConnection dayWiseConnection = (HttpURLConnection) dayWiseUrl.openConnection();
+        System.out.println(dayWiseConnection);
+        dayWiseConnection.setRequestProperty("accept", "application/json");
+        dayWiseConnection.setRequestMethod("GET");
+        Double dayWiseMedian = new TestAPIData().averageEmissionsTest(dayWiseUrl, dayWiseConnection, locations, false);
+
+        System.out.println(thirtyMedian + " " + dayWiseMedian);
 
 
         return 0;

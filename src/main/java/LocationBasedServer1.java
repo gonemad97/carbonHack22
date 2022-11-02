@@ -28,16 +28,17 @@ public class LocationBasedServer1 implements Runnable{
             System.out.println("Server side");
             InputStream inputStream = clientSocket.getInputStream();
             ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
-            Map<String, List<ServerClientProtocol>> taskMap = (Map<String, List<ServerClientProtocol>>) objectInputStream.readObject();
+            List<ServerClientProtocol> taskMap = (List<ServerClientProtocol>) objectInputStream.readObject();
             List<ServerClientProtocol> listOfTasks = new ArrayList<>();
-            if(taskMap.containsKey("dirty")){
-                listOfTasks = taskMap.get("dirty");
-                new LocationBasedServer1(1).cleanEnergy(listOfTasks);
-            }
-            else{
-                listOfTasks = taskMap.get("clean");
-                new LocationBasedServer1(1).dirtyEnergy(listOfTasks);
-            }
+            System.out.println(taskMap);
+//            if(taskMap.containsKey("dirty")){
+//                listOfTasks = taskMap.get("dirty");
+//                new LocationBasedServer1(1).cleanEnergy(listOfTasks);
+//            }
+//            else{
+//                listOfTasks = taskMap.get("clean");
+//                new LocationBasedServer1(1).dirtyEnergy(listOfTasks);
+//            }
         } catch (EOFException eofException){
             eofException.printStackTrace();
         }
