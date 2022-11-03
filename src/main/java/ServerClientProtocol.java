@@ -9,6 +9,11 @@ public class ServerClientProtocol implements Serializable {
     private String taskName;
     private int taskID;
 
+    private int stopStatus;
+
+    //how about we set a task state here - count, no of seconds left, etc
+    //set stop status
+
     public ServerClientProtocol(){}
 
     public void setPriority(int givenPriority){
@@ -28,5 +33,12 @@ public class ServerClientProtocol implements Serializable {
     }
     public int getTaskID(){
         return this.taskID;
+    }
+
+    public void setStopStatus(int status){
+        this.stopStatus = status;
+    }
+    public int getStopStatus(){
+        return this.stopStatus;
     }
 }
