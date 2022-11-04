@@ -4,7 +4,7 @@
 
 
 ## Use Case Diagram
-![Hybrid Energy Task Scheduler](https://user-images.githubusercontent.com/115038203/200062690-40d101a1-710d-4c8d-a0ee-ff3cf4af064f.jpg)
+![Hybrid Energy Task Scheduler (1)](https://user-images.githubusercontent.com/115038203/200063057-c366f795-3146-47b0-b2ab-f40a86af6a3f.jpg)
 
 
 ## Instructions to run this project
