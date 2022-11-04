@@ -4,7 +4,8 @@
 
 
 ## Use Case Diagram
-![carbonHackDesign](https://user-images.githubusercontent.com/115038203/200084725-2cd96b71-bdfa-4ad5-87a9-88dcf34418c6.jpeg)
+![Hybrid Energy Task Scheduler (2)](https://user-images.githubusercontent.com/115038203/200086887-b4de31ab-0436-4dd3-9ac4-df8864838e4a.jpg)
+
 
 
 ## Instructions to run this project
