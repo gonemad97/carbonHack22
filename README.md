@@ -1,7 +1,7 @@
 # carbonHack22
 
 ## Introduction
-
+This application is a task scheduler which is responsible for routing tasks to servers by keeping carbon emissions minimum.
 
 ## Use Case Diagram
 ![Hybrid Energy Task Scheduler (2)](https://user-images.githubusercontent.com/115038203/200086887-b4de31ab-0436-4dd3-9ac4-df8864838e4a.jpg)
