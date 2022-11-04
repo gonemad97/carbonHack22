@@ -39,7 +39,7 @@ public class Client {
         System.out.println("CLIENT SIDE EXECUTION");
         if (args.length != 2) {
             System.err.println(
-                    "Usage: java EchoClient <host name> <port number>");
+                    "Usage: <host name> <client_schedulerServer_port>");
             System.exit(1);
         }
 

@@ -19,7 +19,7 @@ public class EastUS1 implements Runnable, Serializable{
     public static void main(String[] args) throws IOException, ClassNotFoundException, EOFException {
 
         if (args.length != 1) {
-            System.err.println("Usage: java EchoServer <port number>");
+            System.err.println("Usage: <schedulerServer_EastUS1_port>");
             System.exit(1);
         }
         int portNumber = Integer.parseInt(args[0]);

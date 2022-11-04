@@ -184,7 +184,7 @@ public class SchedulerServer implements Runnable {
     public static void main(String[] args) throws IOException, ClassNotFoundException, ParseException, URISyntaxException {
         if (args.length < 2) {
             System.err.println(
-                    "Usage: java EchoClient <host name> <port number>");
+                    "Usage: <host name> <client_schedulerServer_port> <schedulerServer_EastUS1_port> <schedulerServer_EastUS2_port> <schedulerServer_UKSouth_port>");
             System.exit(1);
         }
         SchedulerServer schedulerServer = new SchedulerServer();
