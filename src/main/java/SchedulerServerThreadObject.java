@@ -42,6 +42,25 @@ public class SchedulerServerThreadObject {
     private int threadComplete;
 
 
+    private Double dayWiseMedian;
+
+    private HashMap<String, Double> medianMap;
+
+    public Double getDayWiseMedian() {
+        return dayWiseMedian;
+    }
+
+    public void setDayWiseMedian(Double dayWiseMedian) {
+        this.dayWiseMedian = dayWiseMedian;
+    }
+
+    public HashMap<String, Double> getMedianMap() {
+        return medianMap;
+    }
+
+    public void setMedianMap(HashMap<String, Double> medianMap) {
+        this.medianMap = medianMap;
+    }
 
     public SchedulerServerThreadObject(){
 

@@ -10,8 +10,8 @@ public class URLGeneration {
         URI baseURI30MinMed = new URI("https://carbon-aware-api.azurewebsites.net/emissions/forecasts/current?");
         String locParam = location;
         Instant instant = Instant.now();
-        Instant instantAdd5 = instant.plusMillis(5*60*1000);
-        Instant instantAdd35 = instant.plusMillis(35*60*1000);
+        Instant instantAdd5 = instant.plusMillis(10*60*1000);
+        Instant instantAdd35 = instant.plusMillis(40*60*1000);
         String dataStartAt = instantAdd5.toString();
         String dataEndAt = instantAdd35.toString();
         List<List<String>> uriParameter30Min = new ArrayList<>();

@@ -39,6 +39,7 @@ public class Client {
         return taskList;
     }
     public static void main(String[] args) throws IOException, InterruptedException {
+        System.out.println("CLIENT SIDE");
         if (args.length != 2) {
             System.err.println(
                     "Usage: java EchoClient <host name> <port number>");
@@ -56,16 +57,27 @@ public class Client {
 
 
         int i = 0;
+        int timer = 0;
         while(i < 5){
-            List<ServerClientProtocol> tasksList = new Client().taskCreation();
-            objectOutputStream.writeObject(tasksList);
-//            System.out.println("sending task " + i);
+
+
 //            System.out.println("priority: " + tasksList.get(i).getPriority());
 //            objectOutputStream.writeObject(tasksList.get(i));
-//            Thread.sleep(3000);
-            i++;
+//            Thread.sleep(2000);
+//            i++;
+//            timer++;
+//            if (timer==50)
+//            {
+                List<ServerClientProtocol> tasksList = new Client().taskCreation();
+                objectOutputStream.writeObject(tasksList);
+                System.out.println("sending task " + i );
+                i++;
+                Thread.sleep(10000);
+//                timer=0;
+//            }
+
        }
-        Thread.sleep(300000000);
+
         echoSocket.close();
     }
 
