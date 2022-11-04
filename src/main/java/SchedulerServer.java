@@ -124,23 +124,24 @@ public class SchedulerServer implements Runnable {
     }
 
     public double medianEmissions(HttpURLConnection conn) throws IOException, ParseException {
-        //set the location, time parameters in the url
-//        if(flag){
+
+        System.out.println("MEDIAN EMISSION IS CALLED");
         Double median = 0.0;
         InputStream responseStream = conn.getInputStream();
         System.out.println("response stream " + responseStream);
         JSONParser jsonParser = new JSONParser();
+        InputStreamReader inputStreamReader = null;
         try{
-            InputStreamReader inputStreamReader = new InputStreamReader(responseStream, "UTF-8");
+            inputStreamReader = new InputStreamReader(responseStream);
 //            JSONArray jsonArray = (JSONArray)jsonParser.parse(
 //                    new InputStreamReader(responseStream, "UTF-8"));
             JSONArray jsonArray = (JSONArray)jsonParser.parse(inputStreamReader);
             System.out.println(jsonArray.get(0));
 
-            inputStreamReader.close();
+//            inputStreamReader.close();
 
             ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.configure(com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+            //objectMapper.configure(com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
 
 
             HashMap<String,Object> result =
@@ -162,16 +163,13 @@ public class SchedulerServer implements Runnable {
             else{
                 median = medianList.get(medianList.size()/2);
             }
-            System.out.println(median);
+            System.out.println("median : "+median);
 
             } catch(Exception ex){
                 ex.printStackTrace();
-            } finally {
-                responseStream.close();
-
+//                inputStreamReader.close();
+                //System.out.println("RESPONSE STREAM INSIDE MEDIAN FUNCTION : ")
             }
-
-
 
         return median;
     }
@@ -232,8 +230,8 @@ public class SchedulerServer implements Runnable {
         schedulerServer.serverSocket = new ServerSocket(Integer.parseInt(args[1]));
         Socket clientSocket = null;
                 //= serverSocket.accept();
-//        InputStream inputStream = clientSocket.getInputStream();
-//        ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
+
+
 
         List<ServerClientProtocol> taskList = null;
         String hostName = args[0];
@@ -267,99 +265,120 @@ public class SchedulerServer implements Runnable {
         boolean cal30min = false;
         SchedulerServer schedulerServerMedian= null;
 
+        List<ServerClientProtocol> tasksList = null;
 
-        //List<List<ServerClientProtocol>> tempList = new ArrayList<>();
+        HashMap<String, Double> medianMap = null;
+        HashMap<String, HttpURLConnection> connMap = null;
+        Double dayWiseMedian = null;
+
         try{
             while (true) {
                 System.out.println("ENTER WHILE");
                 clientSocket = schedulerServer.serverSocket.accept();
-                InputStream inputStream = clientSocket.getInputStream();
+                InputStream buffer = new BufferedInputStream(clientSocket.getInputStream());
+                ObjectInputStream objectInputStream = new ObjectInputStream(buffer);
 
 
-                ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
                 System.out.println("Object Input Stream : "+objectInputStream);
                 SchedulerServer dummy = new SchedulerServer();
                 URLGeneration urlGeneration = new URLGeneration();
 
                 long endTime = (long)Double.POSITIVE_INFINITY;
 
-                List<ServerClientProtocol> tasksList = (List<ServerClientProtocol>) objectInputStream.readObject();
+                List<ServerClientProtocol> line;
 
 
-                if(daywise == false){
-                    //date = new Date();
-                    currentDateTime = new Date();
-                    currentDate = formatter.parse(formatter.format(currentDateTime));
 
-                    String daywiseURL = urlGeneration.apiCallDaily();
-                    URL dayWiseUrl = new URL(daywiseURL);
-                    dayWiseConnection = (HttpURLConnection) dayWiseUrl.openConnection();
-                    dayWiseConnection.setRequestProperty("accept", "application/json");
-                    dayWiseConnection.setRequestMethod("GET");
-                    daywise = true;
-                }
+                while ((line= (List<ServerClientProtocol>) objectInputStream.readObject()) != null) {
+                    System.out.println(line);
+                    tasksList = line;
+                    if(daywise == false){
+                        //date = new Date();
+                        currentDateTime = new Date();
+                        currentDate = formatter.parse(formatter.format(currentDateTime));
 
-                int result = (formatter.parse(formatter.format(new Date()))).compareTo(currentDate);
-                if (result!=0) {
-                    daywise = false;
-                    continue;
-                }
+                        String daywiseURL = urlGeneration.apiCallDaily();
+                        URL dayWiseUrl = new URL(daywiseURL);
+                        dayWiseConnection = (HttpURLConnection) dayWiseUrl.openConnection();
+                        dayWiseConnection.setRequestProperty("accept", "application/json");
+                        dayWiseConnection.setRequestMethod("GET");
+                        System.out.println("BEFORE MEDIAN EMISSION IS CALLED FOR DAY WISE ");
+                        dayWiseMedian = new SchedulerServer().medianEmissions(dayWiseConnection);
 
-                if(cal30min == false){
-                    long currentTime = System.currentTimeMillis();
-                    endTime = currentTime + 1800000;
-                    String thirtyURLeastus = urlGeneration.apiCall30Min("eastus");
-                    URL thirtyUrleastus = new URL(thirtyURLeastus);
-                    connectionThirtyeastus = (HttpURLConnection) thirtyUrleastus.openConnection();
-                    connectionThirtyeastus.setRequestProperty("accept", "application/json");
-                    connectionThirtyeastus.setRequestMethod("GET");
+                        daywise = true;
+                    }
 
-                    String thirtyURLuksouth = urlGeneration.apiCall30Min("uksouth");
-                    URL thirtyUrluksouth = new URL(thirtyURLuksouth);
-                    connectionThirtyuksouth = (HttpURLConnection) thirtyUrluksouth.openConnection();
-                    connectionThirtyuksouth.setRequestProperty("accept", "application/json");
-                    connectionThirtyuksouth.setRequestMethod("GET");
+                    int result = (formatter.parse(formatter.format(new Date()))).compareTo(currentDate);
+                    if (result!=0) {
+                        daywise = false;
+                        continue;
+                    }
 
-                    schedulerServerMedian = new SchedulerServer();
-                    cal30min = true;
-                }
+                    if(cal30min == false){
+                        long currentTime = System.currentTimeMillis();
+                        endTime = currentTime + 1800000;
+                        String thirtyURLeastus = urlGeneration.apiCall30Min("eastus");
+                        URL thirtyUrleastus = new URL(thirtyURLeastus);
+                        connectionThirtyeastus = (HttpURLConnection) thirtyUrleastus.openConnection();
+                        connectionThirtyeastus.setRequestProperty("accept", "application/json");
+                        connectionThirtyeastus.setRequestMethod("GET");
 
-                if(System.currentTimeMillis() > endTime){
-                    cal30min = false;
-                    continue;
-                }
+                        String thirtyURLuksouth = urlGeneration.apiCall30Min("uksouth");
+                        URL thirtyUrluksouth = new URL(thirtyURLuksouth);
+                        connectionThirtyuksouth = (HttpURLConnection) thirtyUrluksouth.openConnection();
+                        connectionThirtyuksouth.setRequestProperty("accept", "application/json");
+                        connectionThirtyuksouth.setRequestMethod("GET");
 
-                if(cal30min == true){
-                    SchedulerServerThreadObject schedulerServerThreadObject = new SchedulerServerThreadObject();
-                    schedulerServerThreadObject.setTaskList(tasksList);
-                    System.out.println("tasksList " + tasksList);
-                    HashMap<String, HttpURLConnection> connMap = new HashMap<>();
-                    connMap.put("eastus",connectionThirtyeastus);
-                    connMap.put("uksouth",connectionThirtyuksouth);
-                    System.out.println("connMap " + connMap);
+                        medianMap = new HashMap<>();
+                        connMap = new HashMap<>();
 
-                    HashMap<String, Double> medianMap = new HashMap<>();
-                    Double medianValEastus = schedulerServerMedian.medianEmissions(connMap.get("eastus"));
-                    medianMap.put("eastus", medianValEastus);
-                    Double medianValUksouth = schedulerServerMedian.medianEmissions(connMap.get("uksouth"));
-                    medianMap.put("uksouth", medianValUksouth);
-                    Double dayWiseMedian = schedulerServerMedian.medianEmissions(dayWiseConnection);
+                        connMap.put("eastus",connectionThirtyeastus);
+                        connMap.put("uksouth",connectionThirtyuksouth);
+                        //System.out.println("connMap " + connMap);
 
 
-                    schedulerServerThreadObject.setConnMap(connMap);
-                    schedulerServerThreadObject.setEastus1(objectOutputStream1);
-                    schedulerServerThreadObject.setEnergyListHigh(dummy.highPriorityEnergyList);
-                    schedulerServerThreadObject.setEnergyListLow(dummy.lowPriorityEnergyList);
-                    schedulerServerThreadObject.setEastus2(objectOutputStream2);
-                    schedulerServerThreadObject.setUksouth(objectOutputStream3);
 
-                    schedulerServerThreadObject.setDayWiseConn(dayWiseConnection);
+                        Double medianValEastus = new SchedulerServer().medianEmissions(connMap.get("eastus"));
+                        medianMap.put("eastus", medianValEastus);
+                        Double medianValUksouth = new SchedulerServer().medianEmissions(connMap.get("uksouth"));
+                        medianMap.put("uksouth", medianValUksouth);
 
-                    schedulerServerThreadObject.setDayWiseMedian(dayWiseMedian);
-                    schedulerServerThreadObject.setMedianMap(medianMap);
+                        schedulerServerMedian = new SchedulerServer();
+                        cal30min = true;
+                    }
+
+                    if(System.currentTimeMillis() > endTime){
+                        cal30min = false;
+                        continue;
+                    }
+
+                    if(cal30min == true){
+                        System.out.println("INSIDE CAL30MIN TRUE");
+                        SchedulerServerThreadObject schedulerServerThreadObject = new SchedulerServerThreadObject();
+                        schedulerServerThreadObject.setTaskList(tasksList);
+                        System.out.println("tasksList " + tasksList);
+
+
+
+
+                        schedulerServerThreadObject.setConnMap(connMap);
+                        schedulerServerThreadObject.setEastus1(objectOutputStream1);
+                        schedulerServerThreadObject.setEnergyListHigh(dummy.highPriorityEnergyList);
+                        schedulerServerThreadObject.setEnergyListLow(dummy.lowPriorityEnergyList);
+                        schedulerServerThreadObject.setEastus2(objectOutputStream2);
+                        schedulerServerThreadObject.setUksouth(objectOutputStream3);
+
+                        schedulerServerThreadObject.setDayWiseConn(dayWiseConnection);
+
+                        schedulerServerThreadObject.setDayWiseMedian(dayWiseMedian);
+                        schedulerServerThreadObject.setMedianMap(medianMap);
 //                    objectInputStream.close();
-                    new SchedulerServer(schedulerServerThreadObject);
+                        new SchedulerServer(schedulerServerThreadObject);
+                    }
                 }
+
+
+
 
                 System.out.println("END OF WHILE : connection30eastus : " + connectionThirtyeastus + "connection30uksouth : "+ connectionThirtyuksouth + "daywise : "+dayWiseConnection);
                 //System.out.println(dayWiseConnection);

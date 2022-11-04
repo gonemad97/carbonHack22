@@ -58,7 +58,7 @@ public class Client {
 
         int i = 0;
         int timer = 0;
-        while(i < 5){
+        while(i < 50){
 
 
 //            System.out.println("priority: " + tasksList.get(i).getPriority());
@@ -70,15 +70,17 @@ public class Client {
 //            {
                 List<ServerClientProtocol> tasksList = new Client().taskCreation();
                 objectOutputStream.writeObject(tasksList);
-                System.out.println("sending task " + i );
+                System.out.println("sending task batch" + i );
                 i++;
                 Thread.sleep(10000);
 //                timer=0;
 //            }
 
-       }
 
-        echoSocket.close();
+       }
+        Thread.sleep(100000000);
+
+        //echoSocket.close();
     }
 
 }
