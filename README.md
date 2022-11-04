@@ -8,4 +8,9 @@
 
 
 ## Instructions to run this project
-
+Step 1: git clone https://github.com/gonemad97/carbonHack22.git
+Step 2: There are 4 key files to run this project end-to-end.
+[link text itself]: https://github.com/gonemad97/carbonHack22/blob/main/src/main/java/SchedulerServer.java
+[link text itself]: http://www.reddit.com
+[link text itself]: http://www.reddit.com
+[link text itself]: http://www.reddit.com
