@@ -35,7 +35,7 @@ public class URLGeneration {
     }
 
     public String apiCallDaily() throws URISyntaxException, UnsupportedEncodingException {
-        String[] locations = {"eastus", "westus", "uksouth"};
+        String[] locations = {"eastus", "uksouth"};
         List<List<String>> uriParameter = new ArrayList<>();
         for(String location: locations){
             List<String> paramMap = new ArrayList<>();
