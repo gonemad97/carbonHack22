@@ -1,18 +1,17 @@
-import java.net.*;
 import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.lang.*;
 import java.util.Map;
 
-public class LocationBasedServer1 implements Runnable{
+public class EastUS2 implements Runnable{
     Thread t1;
-    public LocationBasedServer1(){
+    public EastUS2(){
         this.t1 = new Thread(this);
         this.t1.start();
     }
-    public LocationBasedServer1(int num){
+    public EastUS2(int num){
     }
     public static void main(String[] args) throws IOException, ClassNotFoundException, EOFException {
 
@@ -28,25 +27,23 @@ public class LocationBasedServer1 implements Runnable{
         Socket clientSocket = serverSocket.accept();
         InputStream inputStream = clientSocket.getInputStream();
         ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
-        //BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
+
+        OutputStream outputStream1 = clientSocket.getOutputStream();
+        ObjectOutputStream objectOutputStream1 = new ObjectOutputStream(outputStream1);
         try{
             while(true){
                 System.out.println("Server side");
                 //put a while loop, keep listening, send acks
-                Map<String,List<ServerClientProtocol>> taskMap = new HashMap<>();
-                taskMap = (Map<String,List<ServerClientProtocol>>) objectInputStream.readObject();
+                Map<String, List<ServerClientProtocol>> taskMap = (Map<String, List<ServerClientProtocol>>) objectInputStream.readObject();
                 List<ServerClientProtocol> listOfTasks = new ArrayList<>();
                 System.out.println(taskMap);
                 if(taskMap.containsKey("dirty")){
                     listOfTasks = taskMap.get("dirty");
-                    new LocationBasedServer1(1).cleanEnergy(listOfTasks);
+                    new EastUS2(1).dirtyEnergy(listOfTasks);
                 }
-                else{
+                else if(taskMap.containsKey("Clean")){
                     listOfTasks = taskMap.get("Clean");
-                    for(int i =0; i < listOfTasks.size(); i++){
-                        System.out.println("Server side *********");
-                        new LocationBasedServer1();
-                    }
+                    new EastUS2(1).cleanEnergy(listOfTasks);
                 }
             }
         } catch (EOFException eofException){
@@ -84,12 +81,16 @@ public class LocationBasedServer1 implements Runnable{
     public void cleanEnergy(List<ServerClientProtocol> listOfTasks){
         for (int i = 0; i < listOfTasks.size(); i++) {
             System.out.println("task size " + listOfTasks.size());
-            new LocationBasedServer1();
+            new EastUS2();
             System.out.println("Task " + i);
         }
     }
     public void dirtyEnergy(List<ServerClientProtocol> listOfTasks){
-        //implement round-robin
+        //implement sequential
+        System.out.println("Implementing sequential");
+        for(int i = 0; i < listOfTasks.size(); i++){
+            System.out.println(listOfTasks.get(i));
+        }
     }
 
 }
