@@ -11,8 +11,13 @@
 Step 1: git clone https://github.com/gonemad97/carbonHack22.git 
 
 Step 2: There are 4 key files to run this project end-to-end.
-[link text itself]: https://github.com/gonemad97/carbonHack22/blob/main/src/main/java/SchedulerServer.java
 
-[link text itself]: http://www.reddit.com
-[link text itself]: http://www.reddit.com
-[link text itself]: http://www.reddit.com
+[Client]: https://github.com/gonemad97/carbonHack22/blob/main/src/main/java/Client.java
+
+[Scheduler Server]: https://github.com/gonemad97/carbonHack22/blob/main/src/main/java/SchedulerServer.java
+
+[Processing Server - EastUS1]: https://github.com/gonemad97/carbonHack22/blob/main/src/main/java/EastUS1.java
+
+[Processing Server - EastUS2]: https://github.com/gonemad97/carbonHack22/blob/main/src/main/java/EastUS2.java
+
+[Processing Server - UKSouth]: https://github.com/gonemad97/carbonHack22/blob/main/src/main/java/UKSouth.java
