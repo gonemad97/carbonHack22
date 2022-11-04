@@ -60,7 +60,7 @@ public class SchedulerServer implements Runnable {
                                 ObjectOutputStream eastus2, List<ServerClientProtocol> energyListLow,List<ServerClientProtocol> energyListHigh) throws IOException, ClassNotFoundException {
 
         System.out.println("Energy Scenarios*************");
-
+        System.out.println(casesMap);
         if(casesMap.get("eastus") == 0 && casesMap.get("uksouth") == 1){
             List<List<ServerClientProtocol>> loadBalancingListsLow = loadBalancing(energyListLow);
             Map<String,List<ServerClientProtocol>> listMap1Low = new HashMap<>();
@@ -85,6 +85,7 @@ public class SchedulerServer implements Runnable {
             //low priority - send to away
             Map<String, List<ServerClientProtocol>> lowPriorityMap = new HashMap<>();
             lowPriorityMap.put("Clean", energyListLow);
+            System.out.println("LOW PRIORITY MAP :: "+lowPriorityMap);
             uksouth.writeObject(lowPriorityMap);
         }
         if(casesMap.get("eastus") == 1 && casesMap.get("uksouth") == 1){
@@ -101,14 +102,18 @@ public class SchedulerServer implements Runnable {
             //hp
         }
         List<List<ServerClientProtocol>> loadBalancingLists = loadBalancing(energyListHigh);
-        Map<String,List<ServerClientProtocol>> listMap1 = new HashMap<>();
-        Map<String,List<ServerClientProtocol>> listMap2 = new HashMap<>();
+        Map<String,List<ServerClientProtocol>> highPriorityMap1 = new HashMap<>();
+        Map<String,List<ServerClientProtocol>> highPriorityMap2 = new HashMap<>();
 
-        listMap1.put("dirty", loadBalancingLists.get(0));
-        eastus1.writeObject(listMap1);
+        highPriorityMap1.put("dirty", loadBalancingLists.get(0));
+        eastus1.writeObject(highPriorityMap1);
+        System.out.println("HIGH PRIORITY MAP 1: "+highPriorityMap1);
 
-        listMap2.put("dirty", loadBalancingLists.get(1));
-        eastus2.writeObject(listMap2);
+        highPriorityMap2.put("dirty", loadBalancingLists.get(1));
+        eastus2.writeObject(highPriorityMap2);
+        System.out.println("HIGH PRIORITY MAP 2: "+highPriorityMap2);
+
+
 
     }
 
@@ -177,16 +182,19 @@ public class SchedulerServer implements Runnable {
                     casesMap.put(str, 0);
                 }
             }
-            System.out.println("After Meidian Calc******************");
-
+//            System.out.println("After Meidian Calc******************");
+//            System.out.println("low list "+lowPriorityEnergyList);
+//            System.out.println("high list"+highPriorityEnergyList);
             energyScenarios(casesMap, this.SchedulerServerThreadObject.getEastus1(),
                     this.SchedulerServerThreadObject.getUksouth(),
-                    this.SchedulerServerThreadObject.getEastus2(), this.SchedulerServerThreadObject.getEnergyListLow(),
-                    this.SchedulerServerThreadObject.getEnergyListHigh());
+                    this.SchedulerServerThreadObject.getEastus2(), lowPriorityEnergyList,
+                    highPriorityEnergyList);
 
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (ParseException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
 
@@ -218,22 +226,23 @@ public class SchedulerServer implements Runnable {
         OutputStream outputStream1 = echoSocket1.getOutputStream();
         ObjectOutputStream objectOutputStream1 = new ObjectOutputStream(outputStream1);
 
-        InputStream inputStreamEastUS = echoSocket1.getInputStream();
-        ObjectInputStream objectInputStreamEastUS = new ObjectInputStream(inputStreamEastUS);
+//        InputStream inputStreamEastUS = echoSocket1.getInputStream();
+//        ObjectInputStream objectInputStreamEastUS = new ObjectInputStream(inputStreamEastUS);
 
-//        int SchedulerL2PortNumber = Integer.parseInt(args[3]);
-//        Socket echoSocket2 = new Socket(hostName, SchedulerL2PortNumber);
-//        OutputStream outputStream2 = echoSocket2.getOutputStream();
-//        ObjectOutputStream objectOutputStream2 = new ObjectOutputStream(outputStream2);
-//
-//        int SchedulerL3PortNumber = Integer.parseInt(args[4]);
-//        Socket echoSocket3 = new Socket(hostName, SchedulerL3PortNumber);
-//        OutputStream outputStream3 = echoSocket3.getOutputStream();
-//        ObjectOutputStream objectOutputStream3 = new ObjectOutputStream(outputStream3);
+        int SchedulerL2PortNumber = Integer.parseInt(args[3]);
+        Socket echoSocket2 = new Socket(hostName, SchedulerL2PortNumber);
+        OutputStream outputStream2 = echoSocket2.getOutputStream();
+        ObjectOutputStream objectOutputStream2 = new ObjectOutputStream(outputStream2);
+
+        int SchedulerL3PortNumber = Integer.parseInt(args[4]);
+        Socket echoSocket3 = new Socket(hostName, SchedulerL3PortNumber);
+        OutputStream outputStream3 = echoSocket3.getOutputStream();
+        ObjectOutputStream objectOutputStream3 = new ObjectOutputStream(outputStream3);
 
         Queue<List<ServerClientProtocol>> taskQueue = new LinkedList<>();
         try{
             while (true) {
+                System.out.println("ENTER WHILE");
                 SchedulerServer dummy = new SchedulerServer();
                 URLGeneration urlGeneration = new URLGeneration();
                 //listening thread - the url check
@@ -245,7 +254,6 @@ public class SchedulerServer implements Runnable {
                 Date date = null;
                 long endTime = (long)Double.POSITIVE_INFINITY;
                 HttpURLConnection connectionThirtyeastus = null;
-                HttpURLConnection connectionThirtyWestus = null;
                 HttpURLConnection connectionThirtyuksouth = null;
                 HttpURLConnection dayWiseConnection = null;
                 List<ServerClientProtocol> tasksList = (List<ServerClientProtocol>) objectInputStream.readObject();
@@ -271,11 +279,7 @@ public class SchedulerServer implements Runnable {
                     connectionThirtyeastus = (HttpURLConnection) thirtyUrleastus.openConnection();
                     connectionThirtyeastus.setRequestProperty("accept", "application/json");
                     connectionThirtyeastus.setRequestMethod("GET");
-//                    String thirtyURLwestus = urlGeneration.apiCall30Min("westus");
-//                    URL thirtyUrlwestus = new URL(thirtyURLwestus);
-//                    connectionThirtyWestus = (HttpURLConnection) thirtyUrlwestus.openConnection();
-//                    connectionThirtyWestus.setRequestProperty("accept", "application/json");
-//                    connectionThirtyWestus.setRequestMethod("GET");
+
                     String thirtyURLuksouth = urlGeneration.apiCall30Min("uksouth");
                     URL thirtyUrluksouth = new URL(thirtyURLuksouth);
                     connectionThirtyuksouth = (HttpURLConnection) thirtyUrluksouth.openConnection();
@@ -299,7 +303,9 @@ public class SchedulerServer implements Runnable {
                     schedulerServerThreadObject.setEastus1(objectOutputStream1);
                     schedulerServerThreadObject.setEnergyListHigh(dummy.highPriorityEnergyList);
                     schedulerServerThreadObject.setEnergyListLow(dummy.lowPriorityEnergyList);
-                    schedulerServerThreadObject.setEastusInput(objectInputStreamEastUS);
+//                    schedulerServerThreadObject.setEastusInput(objectInputStreamEastUS);
+                    schedulerServerThreadObject.setEastus2(objectOutputStream2);
+                    schedulerServerThreadObject.setUksouth(objectOutputStream3);
                     schedulerServerThreadObject.setDayWiseConn(dayWiseConnection);
                     new SchedulerServer(schedulerServerThreadObject);
                 }

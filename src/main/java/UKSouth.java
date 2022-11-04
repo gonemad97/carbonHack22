@@ -30,7 +30,7 @@ public class UKSouth implements Runnable{
 
         OutputStream outputStream1 = clientSocket.getOutputStream();
         ObjectOutputStream objectOutputStream1 = new ObjectOutputStream(outputStream1);
-        ackObject ackObject = new ackObject();
+        //ackObject ackObject = new ackObject();
         //BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
         try{
             while(true){
