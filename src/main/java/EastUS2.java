@@ -19,7 +19,7 @@ public class EastUS2 implements Runnable, Serializable{
     public static void main(String[] args) throws IOException, ClassNotFoundException, EOFException {
 
         if (args.length != 1) {
-            System.err.println("Usage: java EchoServer <port number>");
+            System.err.println("Usage: <schedulerServer_EastUS2_port>");
             System.exit(1);
         }
         int portNumber = Integer.parseInt(args[0]);
@@ -33,7 +33,6 @@ public class EastUS2 implements Runnable, Serializable{
             while(true){
                 Map<String, List<ServerClientProtocol>> taskMap = (Map<String, List<ServerClientProtocol>>) objectInputStream.readObject();
                 List<ServerClientProtocol> listOfTasks = new ArrayList<>();
-                System.out.println(taskMap);
                 if(taskMap.containsKey("dirty")){
                     listOfTasks = taskMap.get("dirty");
                     new EastUS2().dirtyEnergy(listOfTasks);
