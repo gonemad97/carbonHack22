@@ -4,9 +4,8 @@
 
 
 ## Use Case Diagram
-![Hybrid Energy Task Scheduler (1)](https://user-images.githubusercontent.com/115038203/200063057-c366f795-3146-47b0-b2ab-f40a86af6a3f.jpg)
+![carbonHackDesign](https://user-images.githubusercontent.com/115038203/200084725-2cd96b71-bdfa-4ad5-87a9-88dcf34418c6.jpeg)
 
-[link text itself]:http://www.reddit.com
 
 ## Instructions to run this project
 Step 1: git clone https://github.com/gonemad97/carbonHack22.git 
