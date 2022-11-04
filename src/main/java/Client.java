@@ -23,7 +23,7 @@ public class Client {
             ServerClientProtocol scp1 = new ServerClientProtocol();
             int priority = randomPriorityGenerator();
             scp1.setPriority(priority);
-            if(priority >= 5){
+            if(priority > 5){
                 scp1.setTaskName("Low Priority Task ");
             }
             else{
