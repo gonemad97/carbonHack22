@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class UKSouth implements Runnable{
+public class UKSouth implements Runnable, Serializable{
     Thread t1;
     public UKSouth(){
         this.t1 = new Thread(this);

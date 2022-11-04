@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class EastUS2 implements Runnable{
+public class EastUS2 implements Runnable, Serializable{
     Thread t1;
     public EastUS2(){
         this.t1 = new Thread(this);
