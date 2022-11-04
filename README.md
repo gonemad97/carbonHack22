@@ -1,7 +1,12 @@
 # carbonHack22
 
 ## Introduction
-ToDo
+This project executes a stream of incoming tasks, optimizing for reduced carbon emissions. 
+
+We divide the tasks into low- and high-priority tasks, and execute them on the clean- and dirty-energy-based servers according to certain use cases.
+
+In this way, we efficiently carry out more work during the clean energy supply period and less during the dirty one, reducing our overall carbon footprint.
+
 
 ## Use Case Diagram
 ![Hybrid Energy Task Scheduler (2)](https://user-images.githubusercontent.com/115038203/200086887-b4de31ab-0436-4dd3-9ac4-df8864838e4a.jpg)
