@@ -14,6 +14,11 @@ In this way, we efficiently carry out more work during the clean energy supply p
 
 
 ## Instructions to run this project
+
+IMPORTANT NOTE:
+Since this project is set up as a Maven Project, the pom.xml file will need to be used to import dependencies whenever necessary. The project will not run without importing required dependencies.
+
+
 Step 1: git clone https://github.com/gonemad97/carbonHack22.git 
 
 Step 2: There are 5 key files to run this project end-to-end
