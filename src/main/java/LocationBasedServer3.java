@@ -1,2 +1,0 @@
-public class LocationBasedServer3 {
-}
